@@ -1,56 +1,58 @@
-function calcDistance(lat, long) {
-  if (Math.hypot(long-startLong, lat-startLat) > .000006) {
-    console.log(initialAward);
-    score = score + 60;
-    alert(score);
-    //var text = document.
-    alert('moved far')
-    initialAward.parentNode.removeChild(initialAward);
-    var el = document.createElement('a-entity');
-    let latString = 'latitude: ' + lat;
-    let longString = '; longitude: ' + long + ";";
-    let choordString = latString+longString;
-    alert(choordString);
-    el.setAttribute('gps-entity-place', 'latitude: ${lat}; longitude: ${long};');
-    el.setAttribute('src', 'https://console.echoar.xyz/query?key=withered-bonus-8514&file=15cd7302-ece9-4caa-aa27-2cf3d2d2b11e.glb');
-    el.setAttribute('scale', '5 5 5');
-    el.setAttribute('id','remove')
-    startLat = lat;
-    document.querySelector('#scenery').appendChild(el);
-    //alert(lat);
-    alert("updated el");
-    alert(el);
-    startLat = long;
-    //alert(long);
-    console.log("moved far");
-    initialAward = document.querySelector('a-entity');
+function setVisibility(state) {
+  try {
+    initialAward.setAttribute('visibility', state);
+    initialAward.setAttribute('position', {x: 1, y: 2, z: 3});
   }
-  console.log(Math.hypot(long-startLong, lat-startLat));
-  alert(Math.hypot(long-startLong, lat-startLat))
+  catch(err) {
+    console.log(err);
+  } 
 }
+
+
+function calcDistance(latitude, longitude) {
+  let deltaLong = startLong - longitude;
+  let deltaLat = startLat - latitude;
+  let distance = Math.hypot(deltaLong, deltaLat);
+  
+  if (distance > 0.0002) {  
+    setVisibility('true');
+    score+=50;
+    alert(score);
+    
+    startLat = latitude;
+    startLong = longitude;
+
+  } else if (distance > 0.0001) {
+    setVisibility('false');
+    alert('Walk Further!');
+  }
+
+  
+  return distance;
+}
+
+
+
 var score = 0;
-try {
-var points = 0;
 var startLat;
 var startLong;
-var initialAward = document.querySelector('#remove');
+//var initialAward = document.querySelector('#remove');
+var initialAward = document.querySelector('#award');
 navigator.geolocation.getCurrentPosition((position) =>{
   startLat = position.coords.latitude;
   startLong = position.coords.longitude;
-    console.log(initialAward);
+  initialAward.visibility= "false";
 });
+
 
 const watchID = navigator.geolocation.watchPosition((position) => {
   console.log(position.coords.latitude);
   console.log(position.coords.longitude);
   //document.getElementById("lat").innerHTML=position.coords.latitude;
   //document.getElementById("geo").innerHTML=position.coords.longitude;
-  calcDistance(position.coords.latitude, position.coords.longitude);
-  initialAward = document.querySelector('#remove');
-    alert(initialAward);
+  let distance = calcDistance(position.coords.latitude, position.coords.longitude);
+  var initialAward = document.querySelector('#award');
+  //alert(distance);
+  //alert(initialAward);
 
 });
-}
-catch (err) {
-  alert(err);
-}
